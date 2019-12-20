@@ -39,36 +39,8 @@ resource "aws_vpc_endpoint" "this" {
   vpc_endpoint_type = data.aws_vpc_endpoint_service.this[count.index].service_type
 
   private_dns_enabled = data.aws_vpc_endpoint_service.this[count.index].service_type == "Interface" ? true : false
-
-  subnet_ids         = data.aws_vpc_endpoint_service.this[count.index].service_type == "Interface" ? [aws_subnet.private.id] : null
-  security_group_ids = data.aws_vpc_endpoint_service.this[count.index].service_type == "Interface" ? [aws_security_group.this.id] : null
+  subnet_ids          = data.aws_vpc_endpoint_service.this[count.index].service_type == "Interface" ? [aws_subnet.private.id] : null
+  security_group_ids  = data.aws_vpc_endpoint_service.this[count.index].service_type == "Interface" ? [aws_security_group.this.id] : null
 
   route_table_ids = data.aws_vpc_endpoint_service.this[count.index].service_type == "Gateway" ? [aws_route_table.private.id] : null
-
-}
-
-resource "aws_security_group" "this" {
-
-  description = "Allow TLS inbound traffic"
-  vpc_id      = aws_vpc.golden-ami-factory.id
-
-  ingress {
-    from_port = 443
-    to_port   = 443
-    protocol  = "tcp"
-
-    self = true
-  }
-
-  egress {
-    from_port = 443
-    to_port   = 443
-    protocol  = "tcp"
-
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "noah-demo"
-  }
 }

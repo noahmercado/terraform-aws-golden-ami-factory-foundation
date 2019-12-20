@@ -9,7 +9,6 @@ resource "aws_vpc" "golden-ami-factory" {
   tags = {
     Name = "noah-demo"
   }
-
 }
 
 resource "aws_internet_gateway" "this" {
@@ -25,4 +24,30 @@ resource "aws_nat_gateway" "this" {
 
 resource "aws_eip" "nat" {
   vpc = true
+}
+
+resource "aws_security_group" "this" {
+
+  description = "Allow TLS for Image Builder"
+  vpc_id      = aws_vpc.golden-ami-factory.id
+
+  ingress {
+    from_port = 443
+    to_port   = 443
+    protocol  = "tcp"
+
+    self = true
+  }
+
+  egress {
+    from_port = 443
+    to_port   = 443
+    protocol  = "tcp"
+
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "noah-demo"
+  }
 }
