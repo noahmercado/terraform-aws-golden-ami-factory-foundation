@@ -5,7 +5,6 @@ resource "aws_subnet" "private" {
   cidr_block = cidrsubnet(aws_vpc.golden-ami-factory.cidr_block, ceil(log(2 * 2, 2)), 0)
 
   # availabity_zone = ""
-
 }
 
 resource "aws_route_table" "private" {

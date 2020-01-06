@@ -3,6 +3,7 @@
 */
 
 resource "aws_iam_role" "instance" {
+
   name = "GoldenAMIFactoryInstanceRole"
 
   assume_role_policy = <<POLICY
@@ -23,6 +24,7 @@ POLICY
 }
 
 resource "aws_iam_policy" "instance" {
+
   name        = "GoldenAMIFactoryInstancePolicy"
   path        = "/"
   description = "EC2 instance permissions for SSM"
@@ -72,6 +74,15 @@ resource "aws_iam_policy" "instance" {
         "ec2messages:SendReply"
       ],
       "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::${aws_s3_bucket.logs.id}/imagebuilder/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
+      ]
     }
   ]
 }
@@ -79,9 +90,14 @@ POLICY
 }
 
 resource "aws_iam_policy_attachment" "instance" {
+
   name       = "GoldenAMIFactoryInstance"
   roles      = [aws_iam_role.instance.name]
-  policy_arn = aws_iam_policy.instance.arn
+  policy_arn = data.aws_iam_policy.ssm.arn
 }
 
+resource "aws_iam_instance_profile" "instance" {
 
+  name = "GoldenAMIFactoryInstance"
+  role = aws_iam_role.instance.name
+}

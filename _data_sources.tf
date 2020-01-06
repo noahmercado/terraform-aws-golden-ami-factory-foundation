@@ -22,3 +22,7 @@ data "aws_vpc_endpoint_service" "this" {
 
   service = local.vpc_endpoints[count.index]
 }
+
+data "aws_iam_policy" "ssm" {
+  arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
