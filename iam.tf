@@ -78,11 +78,31 @@ resource "aws_iam_policy" "instance" {
     {
       "Effect": "Allow",
       "Action": [
-        "s3:PutObject"
+        "s3:PutObject",
+        "s3:GetObject"
       ],
       "Resource": [
-        "arn:aws:s3:::${aws_s3_bucket.logs.id}/imagebuilder/AWSLogs/${data.aws_caller_identity.current.account_id}/*"
+        "arn:aws:s3:::${aws_s3_bucket.build-logs.id}/*"
       ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "imagebuilder:GetComponent"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "kms:Decrypt"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "ForAnyValue:StringEquals": {
+          "kms:EncryptionContextKeys": "aws:imagebuilder:arn"
+        }
+      }
     }
   ]
 }
@@ -93,7 +113,7 @@ resource "aws_iam_policy_attachment" "instance" {
 
   name       = "GoldenAMIFactoryInstance"
   roles      = [aws_iam_role.instance.name]
-  policy_arn = data.aws_iam_policy.ssm.arn
+  policy_arn = aws_iam_policy.instance.arn
 }
 
 resource "aws_iam_instance_profile" "instance" {

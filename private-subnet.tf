@@ -5,6 +5,9 @@ resource "aws_subnet" "private" {
   cidr_block = cidrsubnet(aws_vpc.golden-ami-factory.cidr_block, ceil(log(2 * 2, 2)), 0)
 
   # availabity_zone = ""
+  tags = {
+    Name = "golden-ami-factory-private"
+  }
 }
 
 resource "aws_route_table" "private" {
@@ -12,7 +15,7 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.golden-ami-factory.id
 
   tags = {
-    Name = "noah-demo-private"
+    Name = "golden-ami-factory-private"
   }
 }
 

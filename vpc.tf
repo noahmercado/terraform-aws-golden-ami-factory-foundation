@@ -7,19 +7,27 @@ resource "aws_vpc" "golden-ami-factory" {
   enable_classiclink_dns_support = true
 
   tags = {
-    Name = "noah-demo"
+    Name = "golden-ami-factory"
   }
 }
 
 resource "aws_internet_gateway" "this" {
 
   vpc_id = aws_vpc.golden-ami-factory.id
+
+  tags = {
+    Name = "golden-ami-factory"
+  }
 }
 
 resource "aws_nat_gateway" "this" {
 
   allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.public.id
+
+  tags = {
+    Name = "golden-ami-factory"
+  }
 }
 
 resource "aws_eip" "nat" {
@@ -48,15 +56,15 @@ resource "aws_security_group" "this" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  egress {
-    from_port = 80
-    to_port   = 80
-    protocol  = "tcp"
+  # egress {
+  #   from_port = 80
+  #   to_port   = 80
+  #   protocol  = "tcp"
 
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+  #   cidr_blocks = ["0.0.0.0/0"]
+  # }
 
   tags = {
-    Name = "noah-demo"
+    Name = "golden-ami-factory"
   }
 }
